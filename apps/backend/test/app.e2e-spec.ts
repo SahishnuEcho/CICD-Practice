@@ -29,7 +29,7 @@ describe('AppController (e2e)', () => {
       .get('/api/hello')
       .expect(200)
       .expect((res) => {
-        expect(res.body.message).toBe('Hello from the NestJS backend!This is to test the CI part of CI/CD...');
+        expect(res.body.message).toBe('Hello from the NestJS backend! This is to test the CI part of CI/CD...');
       });
   });
 

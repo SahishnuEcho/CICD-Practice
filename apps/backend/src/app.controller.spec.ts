@@ -17,7 +17,7 @@ describe('AppController', () => {
   describe('hello', () => {
     it('should return a greeting message', () => {
       expect(appController.getHello().message).toBe(
-        'Hello from the NestJS backend!',
+        'Hello from the NestJS backend! This is to test the CI part of CI/CD...',
       );
     });
   });
