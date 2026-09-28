@@ -1,19 +1,23 @@
 on:
     push:
         branches:
-            main
+            [main]
 
 jobs:
-    build-all:
+    build-backend:
+        name: build-backend
+        defaults:
+            run:
+                working-directory:
+                    ./apps/backend
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@main
+            - uses: actions/checkout@v7
             - uses: actions/setup-node@v7
               with: 
                 node-version: 24
             - run: cd apps/backend
-            - run: npm install --package-lock-only
             - run: npm ci
+            - run: npm run lint
             - run: npm run build
-            - run: npm run test
-            - run: npm run start
+            - run: npm run test:e2e
