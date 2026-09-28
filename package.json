@@ -1,0 +1,11 @@
+{
+  "name": "cicd-practice",
+  "private": true,
+  "scripts": {
+    "install:all": "npm ci --prefix apps/backend && npm ci --prefix apps/frontend",
+    "start:backend": "npm run start:dev --prefix apps/backend",
+    "start:frontend": "npm start --prefix apps/frontend",
+    "test": "npm test --prefix apps/backend && npm test --prefix apps/frontend -- --watch=false",
+    "build": "npm run build --prefix apps/backend && npm run build --prefix apps/frontend"
+  }
+}
