@@ -1,0 +1,27 @@
+name: frontend-ci-workflow
+
+on:
+    pull_request:
+        branches:
+            [main]
+    push:
+        branches:
+            [main]
+    workflow_dispatch:
+
+jobs:
+    build-frontend:
+        name: build-frontend
+        defaults:
+            run:
+                working-directory:
+                    ./apps/frontend
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v7
+            - uses: actions/setup-node@v7
+              with:
+                node-version: 24
+            - run: npm ci
+            - run: npm run build
+            - run: npm run test -- --no-watch
