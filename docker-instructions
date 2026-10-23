@@ -1,0 +1,42 @@
+That order works fine. CD has more new ideas than CI, so here's the overall shape first.
+
+## What CD adds
+
+Your CI answers "is this code good?". CD takes code that passed and gets it running somewhere, in four stages:
+
+```
+1. Package   → turn the app into something runnable anywhere (a Docker image)
+2. Publish   → push that image to a registry (a store for images)
+3. Deploy    → tell the host to run the new image
+4. Verify    → check the deployed app is actually up (your /api/health endpoint is for this)
+```
+
+Stages 1 and 2 are the same whichever cloud you pick, so you can start now and choose the host later. For the registry I'd use **GitHub Container Registry (GHCR)**: it's free for public repos and needs no extra account.
+
+## Exercise 2: package the backend
+
+Don't touch a workflow yet. First get the image building **on your own machine**, because debugging a Dockerfile through CI is slow and painful.
+
+**Goal:** write `apps/backend/Dockerfile`, build the image locally, run it, and get a response from `http://localhost:3000/api/health`.
+
+Work through these questions:
+
+1. **Base image:** which official image gives you Node 24? Look at the variants (`node:24`, `node:24-slim`, `node:24-alpine`) and what they trade off.
+2. **What does the app need at runtime?** Look at `start:prod` in [apps/backend/package.json](apps/backend/package.json). It runs `node dist/main`, so the container needs `dist/` and the production `node_modules`. It doesn't need the TypeScript source or the dev dependencies.
+3. **Where does `dist/` come from?** It has to be built, and building needs the dev dependencies (the Nest CLI, TypeScript). So you need dev dependencies to build but don't want them in the final image. Look up **multi-stage builds**, which exist to solve this.
+4. **Layer order:** why do Dockerfiles copy `package*.json` and run `npm ci` *before* copying the rest of the source? (Hint: caching.)
+5. **`.dockerignore`:** what should never be copied into the image?
+6. **Port:** [main.ts](apps/backend/src/main.ts) listens on `process.env.PORT ?? 3000`. How do you publish a container port to your machine with `docker run`?
+
+A simple single-stage Dockerfile is fine for a first version. Get it working, then improve it to multi-stage.
+
+Useful docs:
+- [Dockerfile reference](https://docs.docker.com/reference/dockerfile/)
+- [Multi-stage builds](https://docs.docker.com/build/building/multi-stage/)
+
+## Two questions for you
+
+- **Do you have Docker Desktop installed?** If not, install it first, since you need it for this exercise.
+- **Where do you want to deploy?** You don't have to decide yet, but start thinking about it: Render (free and quickest), Azure or AWS (more setup, closer to what companies use). It affects stage 3, and whether you need to create a cloud account.
+
+Show me the Dockerfile when you have a draft, or the error if you get stuck.
