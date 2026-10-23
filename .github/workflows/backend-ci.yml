@@ -27,3 +27,28 @@ jobs:
             - run: npm run build
             - run: npm run test
             - run: npm run test:e2e
+
+    publish-backend:
+        name: publish-backend
+        needs: build-backend
+        if: ${{ github.event_name == 'pull_request' && github.ref == 'main' }}
+        defaults:
+            run:
+                working-directory:
+                    ./apps/backend
+        permissions:
+            contents: read
+            packages: write
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v7
+              env:
+                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - run: docker login ghcr.io -u SahishnuEcho
+            - run: docker build -t backend:${{ github.sha }} -t backend:latest .
+            - run: docker push ghcr.io/sahishnuecho/backend:${{ github.sha }}
+            - run: docker push ghcr.io/sahishnuecho/backend:latest
+
+
+
+
